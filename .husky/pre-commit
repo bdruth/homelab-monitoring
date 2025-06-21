@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-if test -f ".nvmrc"; then
-    nvm use
-fi
-
 node --version
-yarn test
+yarn lint
+yarn format
