@@ -37,11 +37,6 @@ jobs:
 
       - name: Run Playwright tests
         run: yarn test
-        env:
-          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
-          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
-          INDEXER_APP_URL: ${{ secrets.INDEXER_APP_URL }}
-          INDEXER_NAME: ${{ secrets.INDEXER_NAME }}
 
       - name: Upload test results
         if: always()
