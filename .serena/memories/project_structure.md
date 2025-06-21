@@ -8,7 +8,7 @@ homelab-monitoring/
 │   └── workflows/
 │       └── run-tests.yml        # CI workflow definition
 ├── tests/                      # Test files
-│   ├── indexer_app.spec.ts         # Prowlarr smoke test (TypeScript)
+│   ├── indexer_app.spec.ts         # Indexer app smoke test (TypeScript)
 ├── playwright.config.ts        # Playwright configuration (TypeScript)
 ├── tsconfig.json               # TypeScript configuration
 ├── package.json                # Node.js project definition
@@ -25,7 +25,7 @@ Configures Playwright with settings for timeouts, retries, screenshots, and vide
 
 ### tests/indexer_app.spec.ts
 
-Implements smoke tests for Prowlarr application availability and indexer health in TypeScript.
+Implements smoke tests for Indexer application availability and indexer health in TypeScript.
 
 ### tsconfig.json
 

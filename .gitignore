@@ -15,3 +15,4 @@ test-results/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+git-crypt-key
