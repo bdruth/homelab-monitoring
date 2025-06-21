@@ -1,5 +1,8 @@
-#!/usr/bin/env sh
-# shellcheck disable=SC1091
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env bash
 
+if test -f ".nvmrc"; then
+    nvm use
+fi
+
+node --version
 yarn test
