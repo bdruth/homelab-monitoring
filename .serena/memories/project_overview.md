@@ -1,0 +1,25 @@
+# Homelab Monitoring Project
+
+## Purpose
+Automated TypeScript and Playwright-based monitoring for homelab applications. This project runs smoke tests to verify that applications in a homelab environment are functioning correctly and sends notifications on failure.
+
+## Current Capabilities
+- **Prowlarr Monitoring**: Verifies application availability and indexer health
+- **Notification System**: Uses Pushover to send alerts on test failures
+- **Scheduled Execution**: Tests run hourly through Gitea CI
+
+## Tech Stack
+- TypeScript for type-safe code
+- Node.js v22+
+- Yarn 4.9.2 as package manager
+- Playwright for browser automation
+- Pushover API for notifications
+- Gitea CI for continuous integration
+
+## Core Features
+- Smoke tests for application availability
+- Component health checks
+- Failure notifications via Pushover
+- Scheduled monitoring via CI
+
+This project follows a minimalist approach, focusing on essential functionality without unnecessary complexity (YAGNI principles).
