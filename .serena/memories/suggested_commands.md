@@ -16,6 +16,9 @@ yarn playwright install chromium
 ## Development Commands
 
 ```bash
+# Load secrets from 1Password into your shell session
+source ./setup-env.sh
+
 # Build TypeScript code
 yarn build
 
@@ -29,6 +32,14 @@ yarn test
 # For local development, create .env file with Pushover credentials
 echo "PUSHOVER_TOKEN=your_token_here" > .env
 echo "PUSHOVER_USER=your_user_key_here" >> .env
+
+# Add variables for the dashboard monitor and authentication proxy
+echo "DASHBOARD_APP_URL=https://dashboard.example.com" >> .env
+echo "DASHBOARD_APP_NAME=MyDashboard" >> .env
+echo "DASHBOARD_URL_WILDCARD=**/dashboard.example.com/**" >> .env
+echo "AUTH_URL_WILDCARD=**/auth.example.com/**" >> .env
+echo "SERVICE_ACCOUNT_VAULT=your-1password-vault" >> .env
+echo "SERVICE_ACCOUNT_ITEM=your-1password-item" >> .env
 ```
 
 ## CI Integration

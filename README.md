@@ -4,7 +4,8 @@ Automated TypeScript and Playwright-based monitoring for homelab applications. R
 
 ## Current Monitors
 
-- **Indexer App**: Verifies application availability and checks that a particular indexer is healthy
+- **Indexer App**: Verifies application availability and checks that a particular indexer is healthy.
+- **Dashboard App**: Verifies that a dashboard application is accessible and not displaying "No Data" errors. This test handles authentication via an authentication proxy.
 
 ## Setup
 
@@ -35,15 +36,29 @@ Automated TypeScript and Playwright-based monitoring for homelab applications. R
    yarn playwright install chromium
    ```
 
-5. Configure environment variables for notifications (optional):
+5. **Set up 1Password CLI (for local development)**:
+   This project uses 1Password to manage credentials for authenticated tests.
+
+   - Install the 1Password CLI: [https://1password.com/downloads/cli/](https://1password.com/downloads/cli/)
+   - Sign in to your 1Password account in the CLI.
+
+6. Configure environment variables for notifications (optional):
 
    ```
    # For local development, create a .env file
    echo "PUSHOVER_TOKEN=your_token_here" > .env
    echo "PUSHOVER_USER=your_user_key_here" >> .env
+
+   # Add variables for the dashboard monitor and authentication proxy
+   echo "DASHBOARD_APP_URL=https://dashboard.example.com" >> .env
+   echo "DASHBOARD_APP_NAME=MyDashboard" >> .env
+   echo "DASHBOARD_URL_WILDCARD=**/dashboard.example.com/**" >> .env
+   echo "AUTH_URL_WILDCARD=**/auth.example.com/**" >> .env
+   echo "SERVICE_ACCOUNT_VAULT=your-1password-vault" >> .env
+   echo "SERVICE_ACCOUNT_ITEM=your-1password-item" >> .env
    ```
 
-6. Set up git-crypt (for secure .env file encryption):
+7. Set up git-crypt (for secure .env file encryption):
 
    ```
    # Install git-crypt if not already installed
@@ -63,9 +78,15 @@ Automated TypeScript and Playwright-based monitoring for homelab applications. R
 
 ## Running Tests
 
-Run all tests:
+To run tests locally, you first need to load the secrets from 1Password into your shell session using the provided script:
 
+```bash
+source ./setup-env.sh
 ```
+
+Then, you can run all tests:
+
+```bash
 yarn test
 ```
 
@@ -100,7 +121,7 @@ test('My application check', async ({ page }) => {
 
 ## CI Integration
 
-This repository includes configuration for Gitea CI (compatible with GitHub Actions) in `.gitea/workflows/run-tests.yml`. Tests will automatically run:
+This repository includes configuration for Gitea CI (compatible with GitHub Actions) in `.gitea/workflows/run-tests.yml`. The CI workflow uses the [1Password GitHub Action](https://github.com/1Password/load-secrets-action) to securely load credentials for authenticated tests. Tests will automatically run:
 
 - On every push to the main branch
 - On pull requests to the main branch
