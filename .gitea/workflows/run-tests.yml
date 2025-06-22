@@ -35,8 +35,27 @@ jobs:
       - name: Install Playwright browsers
         run: yarn playwright install chromium --with-deps
 
+      - name: Configure 1Password
+        uses: 1password/load-secrets-action/configure@v2
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv-action@v2
+        with:
+          mode: 'expand'
+
+      - name: Load secrets
+        uses: 1password/load-secrets-action@v2
+        with:
+          AUTH_USERNAME: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/username
+          AUTH_PASSWORD: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/password
+          AUTH_TOTP: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password
+
       - name: Run Playwright tests
+        id: playwright-test
         run: yarn test
+        continue-on-error: true
 
       - name: Upload test results
         if: always()
@@ -46,13 +65,42 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: Send Pushover notification
+      - name: Parse test results
+        id: test-results
+        if: steps.playwright-test.outcome == 'failure'
+        run: |
+          FAILED_TESTS=$(grep -o "Dashboard application health check.*failed" playwright-report/report.xml || echo "")
+          if [[ ! -z "$FAILED_TESTS" ]]; then
+            echo "::set-output name=app_failure::dashboard"
+          fi
+
+          FAILED_TESTS=$(grep -o "Indexer application health check.*failed" playwright-report/report.xml || echo "")
+          if [[ ! -z "$FAILED_TESTS" ]]; then
+            echo "::set-output name=app_failure::indexer"
+          fi
+
+      - name: Send application test failure notification
         uses: umahmood/pushover-actions@main
-        if: failure()
+        if: steps.test-results.outputs.app_failure
+        env:
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        with:
+          status: 'failed'
+          title: 'Homelab Monitoring'
+          message: '${{ steps.test-results.outputs.app_failure == "dashboard" && "Dashboard (Grafana)" || "Indexer (Prowlarr)" }} application monitoring failed'
+
+      - name: Send workflow failure notification
+        uses: umahmood/pushover-actions@main
+        if: failure() && steps.test-results.outcome != 'failure'
         env:
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         with:
           status: ${{ job.status }}
           title: 'Homelab Monitoring'
-          message: 'Monitoring tests failed - ${{ github.actor }}'
+          message: 'Workflow failed - ${{ github.actor }}'
+
+      - name: Final status check
+        if: steps.playwright-test.outcome == 'failure'
+        run: exit 1
