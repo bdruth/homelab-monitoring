@@ -35,11 +35,6 @@ jobs:
       - name: Install Playwright browsers
         run: yarn playwright install chromium --with-deps
 
-      - name: Configure 1Password
-        uses: 1password/load-secrets-action/configure@v2
-        with:
-          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
       - name: Load .env file
         uses: xom9ikk/dotenv@v2.3.0
         with:
@@ -47,10 +42,13 @@ jobs:
 
       - name: Load secrets
         uses: 1password/load-secrets-action@v2
-        with:
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           AUTH_USERNAME: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/username
           AUTH_PASSWORD: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/password
-          AUTH_TOTP: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password
+          AUTH_TOTP: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password?attribute=otp
+        with:
+          export-env: true
 
       - name: Run Playwright tests
         id: playwright-test
