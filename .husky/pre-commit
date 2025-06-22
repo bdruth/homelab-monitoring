@@ -3,3 +3,4 @@
 node --version
 yarn lint
 yarn format
+yarn lint:workflows

@@ -6,6 +6,7 @@
     "test": "playwright test",
     "prepare": "husky",
     "lint": "eslint .",
+    "lint:workflows": "bash ./scripts/lint-workflows.sh",
     "format": "prettier --write \"**/*.{ts,js,json}\"",
     "lint-staged": "lint-staged"
   },
