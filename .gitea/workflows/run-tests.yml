@@ -41,9 +41,9 @@ jobs:
           service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
       - name: Load .env file
-        uses: xom9ikk/dotenv-action@v2
+        uses: xom9ikk/dotenv@v2.3.0
         with:
-          mode: 'expand'
+          load-mode: strict
 
       - name: Load secrets
         uses: 1password/load-secrets-action@v2
