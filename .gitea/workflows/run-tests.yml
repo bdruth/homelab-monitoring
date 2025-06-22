@@ -94,6 +94,11 @@ jobs:
             echo "app_failure=indexer" >> "$GITHUB_OUTPUT"
           fi
 
+          FAILED_TESTS=$(grep -o "Workflow application health check.*failed" test-results/results.txt || echo "")
+          if [[ -n "$FAILED_TESTS" ]]; then
+            echo "app_failure=workflow" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Send application test failure notification
         uses: umahmood/pushover-actions@main
         if: steps.test-results.outputs.app_failure
@@ -103,7 +108,12 @@ jobs:
         with:
           status: 'failed'
           title: '${{ steps.test-results.outputs.app_failure }} monitoring'
-          message: ${{ steps.test-results.outputs.app_failure == 'dashboard' && 'Dashboard' || 'Indexer' }} application monitoring failed
+          message: >-
+            ${{ 
+              steps.test-results.outputs.app_failure == 'dashboard' && 'Dashboard' || 
+              steps.test-results.outputs.app_failure == 'indexer' && 'Indexer' || 
+              'Workflow'
+            }} application monitoring failed
 
       - name: Send workflow failure notification
         uses: umahmood/pushover-actions@main
