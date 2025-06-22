@@ -47,6 +47,8 @@ jobs:
           AUTH_USERNAME: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/username
           AUTH_PASSWORD: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/password
           AUTH_TOTP: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password?attribute=otp
+          WORKFLOW_AUTH_USERNAME: op://${{ env.WORKFLOW_SERVICE_ACCOUNT_VAULT }}/${{ env.WORKFLOW_SERVICE_ACCOUNT_ITEM }}/username
+          WORKFLOW_AUTH_PASSWORD: op://${{ env.WORKFLOW_SERVICE_ACCOUNT_VAULT }}/${{ env.WORKFLOW_SERVICE_ACCOUNT_ITEM }}/password
         with:
           export-env: true
 
