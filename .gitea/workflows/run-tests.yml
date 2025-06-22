@@ -101,8 +101,8 @@ jobs:
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         with:
           status: 'failed'
-          title: 'Homelab Monitoring'
-          message: '${{ steps.test-results.outputs.app_failure == "dashboard" && "Dashboard (Grafana)" || "Indexer (Prowlarr)" }} application monitoring failed'
+          title: '${{ steps.test-results.outputs.app_failure }} monitoring'
+          message: '${{ steps.test-results.outputs.app_failure == "dashboard" && "Dashboard" || "Indexer" }} application monitoring failed'
 
       - name: Send workflow failure notification
         uses: umahmood/pushover-actions@main
