@@ -59,20 +59,21 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: test-results
+          path: test-results/
           retention-days: 7
 
       - name: Parse test results
         id: test-results
         if: steps.playwright-test.outcome == 'failure'
         run: |
-          FAILED_TESTS=$(grep -o "Dashboard application health check.*failed" playwright-report/report.xml || echo "")
+          cat test-results/test-results.json | jq '.suites[].specs[] | .title + ":" + .tests[].results[].status' > test-results/results.txt
+          FAILED_TESTS=$(grep -o "Dashboard application health check.*failed" test-results/results.txt || echo "")
           if [[ ! -z "$FAILED_TESTS" ]]; then
             echo "::set-output name=app_failure::dashboard"
           fi
 
-          FAILED_TESTS=$(grep -o "Indexer application health check.*failed" playwright-report/report.xml || echo "")
+          FAILED_TESTS=$(grep -o "Indexer application health check.*failed" test-results/results.txt || echo "")
           if [[ ! -z "$FAILED_TESTS" ]]; then
             echo "::set-output name=app_failure::indexer"
           fi

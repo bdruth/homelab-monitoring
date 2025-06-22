@@ -15,7 +15,7 @@ export default defineConfig({
   // Retry failed tests on CI
   retries: process.env.CI ? 2 : 0,
   // Reporter to use
-  reporter: 'list',
+  reporter: [['list'], ['json', { outputFile: 'test-results/test-results.json' }]],
   // Shared settings for all the projects below
   use: {
     // Maximum time each action (like click()) can take
