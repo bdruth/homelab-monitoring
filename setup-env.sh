@@ -20,4 +20,7 @@ export AUTH_USERNAME="$(op read "op://$SERVICE_ACCOUNT_VAULT/$SERVICE_ACCOUNT_IT
 export AUTH_PASSWORD="$(op read "op://$SERVICE_ACCOUNT_VAULT/$SERVICE_ACCOUNT_ITEM/password")"
 export AUTH_TOTP="$(op read "op://$SERVICE_ACCOUNT_VAULT/$SERVICE_ACCOUNT_ITEM/one-time password?attribute=otp")"
 
+export WORKFLOW_AUTH_USERNAME="$(op read "op://$WORKFLOW_SERVICE_ACCOUNT_VAULT/$WORKFLOW_SERVICE_ACCOUNT_ITEM/username")"
+export WORKFLOW_AUTH_PASSWORD="$(op read "op://$WORKFLOW_SERVICE_ACCOUNT_VAULT/$WORKFLOW_SERVICE_ACCOUNT_ITEM/password")"
+
 echo "✅ Environment variables set for local testing."

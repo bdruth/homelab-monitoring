@@ -6,6 +6,7 @@ Automated TypeScript and Playwright-based monitoring for homelab applications. R
 
 - **Indexer App**: Verifies application availability and checks that a particular indexer is healthy.
 - **Dashboard App**: Verifies that a dashboard application is accessible and not displaying "No Data" errors. This test handles authentication via an authentication proxy.
+- **Workflow App**: Verifies that the workflow automation application is accessible and that the overview page loads correctly after logging in.
 
 ## Setup
 
@@ -56,6 +57,13 @@ Automated TypeScript and Playwright-based monitoring for homelab applications. R
    echo "AUTH_URL_WILDCARD=**/auth.example.com/**" >> .env
    echo "SERVICE_ACCOUNT_VAULT=your-1password-vault" >> .env
    echo "SERVICE_ACCOUNT_ITEM=your-1password-item" >> .env
+
+   # Add variables for the workflow monitor
+   echo "WORKFLOW_APP_URL=https://workflow.example.com" >> .env
+   echo "WORKFLOW_APP_NAME=MyWorkflow" >> .env
+   echo "WORKFLOW_URL_WILDCARD=**/workflow.example.com/**" >> .env
+   echo "WORKFLOW_SERVICE_ACCOUNT_VAULT=your-1password-vault" >> .env
+   echo "WORKFLOW_SERVICE_ACCOUNT_ITEM=your-1password-item-name" >> .env
    ```
 
 7. Set up git-crypt (for secure .env file encryption):
