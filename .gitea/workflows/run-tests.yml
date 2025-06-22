@@ -75,8 +75,8 @@ jobs:
             echo "Unsupported architecture: $ARCH"
             exit 1
           fi
-          sudo curl -L "https://github.com/jqlang/jq/releases/download/${LATEST_JQ_VERSION}/jq-linux-${JQ_ARCH}" -o /usr/local/bin/jq
-          sudo chmod +x /usr/local/bin/jq
+          curl -L "https://github.com/jqlang/jq/releases/download/${LATEST_JQ_VERSION}/jq-linux-${JQ_ARCH}" -o /usr/local/bin/jq
+          chmod +x /usr/local/bin/jq
 
       - name: Parse test results
         id: test-results
