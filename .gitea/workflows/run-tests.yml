@@ -134,7 +134,10 @@ jobs:
         if: success() && steps.playwright-test.outcome != 'failure'
         run: |
           LAST_RUN_ID=$((${{ github.run_id }} - 1))
-          LAST_RUN_STATUS=$(curl -s -H "Authorization: token ${{ secrets.TOKEN_FOR_GITEA_API }}" "${{ env.GITEA_HOST }}/api/v1/repos/${{ github.repository }}/actions/runs" | jq -r '.workflow_runs[] | select(.id == '"$LAST_RUN_ID"') | .conclusion')
+          LAST_RUN_STATUS=$(curl -s \
+            -H "Authorization: token ${{ secrets.TOKEN_FOR_GITEA_API }}" \
+            "${{ env.GITEA_HOST }}/api/v1/repos/${{ github.repository }}/actions/workflows/run-tests.yml/runs" | \
+            jq -r '.workflow_runs[] | select(.id == '"$LAST_RUN_ID"') | .conclusion')
           if [[ "$LAST_RUN_STATUS" == "failure" ]]; then
             echo "recovered=true" >> "$GITHUB_OUTPUT"
           fi
