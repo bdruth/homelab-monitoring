@@ -125,7 +125,7 @@ jobs:
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         with:
           status: ${{ job.status }}
-          title: 'Homelab Monitoring'
+          title: ${{ github.workflow }}
           message: 'Workflow failed - ${{ github.actor }}'
 
       # If this is a successful run, check if previous run was a failure
@@ -150,7 +150,7 @@ jobs:
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         with:
           status: 'recovered'
-          title: 'Homelab Monitoring'
+          title: ${{ github.workflow }}
           message: 'Monitoring recovered after a failure'
 
       - name: Final status check
