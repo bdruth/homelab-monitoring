@@ -133,11 +133,14 @@ jobs:
         id: check-previous-run
         if: success() && steps.playwright-test.outcome != 'failure'
         run: |
-          LAST_RUN_ID=$((${{ github.run_id }} - 1))
+          LAST_RUN_ID=$(curl \
+            -H "Authorization: token ${{ secrets.TOKEN_FOR_GITEA_API }}" \
+            ${{ env.GITEA_HOST }}/api/v1/repos/bruth/homelab-monitoring/actions/runs | \
+            jq '.workflow_runs.[].id' | sort -n | tail -n 2 | head -n 1)
           LAST_RUN_STATUS=$(curl -s \
             -H "Authorization: token ${{ secrets.TOKEN_FOR_GITEA_API }}" \
-            "${{ env.GITEA_HOST }}/api/v1/repos/${{ github.repository }}/actions/workflows/run-tests.yml/runs" | \
-            jq -r '.workflow_runs[] | select(.id == '"$LAST_RUN_ID"') | .conclusion')
+            "${{ env.GITEA_HOST }}/api/v1/repos/bruth/homelab-monitoring/actions/runs/$LAST_RUN_ID/jobs" | \
+            jq '.jobs.[].conclusion')
           if [[ "$LAST_RUN_STATUS" == "failure" ]]; then
             echo "recovered=true" >> "$GITHUB_OUTPUT"
           fi
