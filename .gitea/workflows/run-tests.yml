@@ -144,6 +144,13 @@ jobs:
           if [[ "$LAST_RUN_STATUS" == "failure" ]]; then
             echo "recovered=true" >> "$GITHUB_OUTPUT"
           fi
+          echo "Success? ${{ job.status }}"
+          echo "Previous run ID: $LAST_RUN_ID"
+          echo "Previous run status: $LAST_RUN_STATUS"
+
+      - name: Debug previous run check
+        run: |
+          echo "Recovered: ${{ steps.check-previous-run.outputs.recovered }}"
 
       - name: Send recovery notification
         uses: umahmood/pushover-actions@main
