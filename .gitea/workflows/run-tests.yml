@@ -143,6 +143,8 @@ jobs:
             jq '.jobs.[].conclusion')
           if [[ "$LAST_RUN_STATUS" == "failure" ]]; then
             echo "recovered=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "recovered=false" >> "$GITHUB_OUTPUT"
           fi
           echo "Success? ${{ job.status }}"
           echo "Previous run ID: $LAST_RUN_ID"
