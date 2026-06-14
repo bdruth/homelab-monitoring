@@ -140,7 +140,7 @@ jobs:
           LAST_RUN_STATUS=$(curl -s \
             -H "Authorization: token ${{ secrets.TOKEN_FOR_GITEA_API }}" \
             "${{ env.GITEA_HOST }}/api/v1/repos/bruth/homelab-monitoring/actions/runs/$LAST_RUN_ID/jobs" | \
-            jq '.jobs.[].conclusion')
+            jq -r '.jobs.[].conclusion')
           if [[ "$LAST_RUN_STATUS" == "failure" ]]; then
             echo "recovered=true" >> "$GITHUB_OUTPUT"
           else
