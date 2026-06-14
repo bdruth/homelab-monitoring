@@ -31,7 +31,7 @@ test('Dashboard application health check', async ({ page }) => {
   console.log(`Current URL: ${page.url()}`);
   await page.getByLabel('Username').fill(AUTH_USERNAME);
   await page.getByRole('textbox', { name: 'Password' }).fill(AUTH_PASSWORD);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
   // Wait for the TOTP input to appear
   const totpDigits = AUTH_TOTP.split('');
