@@ -42,7 +42,7 @@ test('Dashboard application health check', async ({ page }) => {
   // 1Password stores for an OTP field — referencing that field without
   // ?attribute=otp yields the URI (which embeds the seed). Handle both.
   const totpSecret = AUTH_TOTP_SECRET.startsWith('otpauth://')
-    ? (new URL(AUTH_TOTP_SECRET).searchParams.get('secret') ?? '')
+    ? (AUTH_TOTP_SECRET.match(/[?&]secret=([^&]+)/i)?.[1] ?? '')
     : AUTH_TOTP_SECRET;
   const totp = authenticator.generate(totpSecret);
   expect(totp, 'TOTP code (is AUTH_TOTP_SECRET the seed / otpauth URI?)').toMatch(/^\d{6}$/);
