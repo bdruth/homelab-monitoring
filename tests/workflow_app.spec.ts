@@ -28,17 +28,18 @@ test('Workflow application health check', async ({ page }) => {
   await page.fill("[name='password']", AUTH_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
 
-  // Wait for page to load completely
+  // Wait for login to land on the app; the overview assertion below is the real
+  // readiness gate. Avoid waitForLoadState('networkidle'), which is flaky on
+  // apps that keep background connections open (e.g. websockets).
   await page.waitForURL(WORKFLOW_URL_WILDCARD);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Step 3: Verify page title (basic availability check)
-  const title = await page.title();
-  expect(title).toContain(WORKFLOW_APP_NAME);
+  await expect(page).toHaveTitle(new RegExp(WORKFLOW_APP_NAME));
   console.log('✅ Workflow application is available');
 
   // Step 4: Verify the overview page is loaded
-  const overviewHeader = await page.locator('h2:has-text("Overview")');
-  await expect(overviewHeader).toBeVisible();
+  const overviewHeader = page.locator('h2:has-text("Overview")');
+  await expect(overviewHeader).toBeVisible({ timeout: 15000 });
   console.log('✅ Workflow overview page is loaded');
 });

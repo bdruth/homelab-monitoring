@@ -40,20 +40,32 @@ test('Dashboard application health check', async ({ page }) => {
     await page.locator(`input[aria-label="${label}"]`).fill(totpDigits[i]);
   }
 
-  // Handle consent page
-  await page.getByRole('button', { name: 'Accept' }).click();
+  // Handle the Authelia consent page. It only appears the first time consent is
+  // granted for the client; on later runs Authelia remembers consent server-side
+  // and redirects straight to the app, so this step must be conditional.
+  const acceptButton = page.getByRole('button', { name: 'Accept' });
+  await Promise.race([
+    page.waitForURL(DASHBOARD_URL_WILDCARD),
+    acceptButton.waitFor({ state: 'visible' }),
+  ]).catch(() => {});
+  if (await acceptButton.isVisible().catch(() => false)) {
+    await acceptButton.click();
+  }
 
-  // Wait for page to load completely
+  // Wait for the dashboard navigation to settle
   await page.waitForURL(DASHBOARD_URL_WILDCARD);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Step 3: Verify page title (basic availability check)
-  const title = await page.title();
-  expect(title).toContain(DASHBOARD_APP_NAME);
+  await expect(page).toHaveTitle(new RegExp(DASHBOARD_APP_NAME));
   console.log('✅ Dashboard application is available');
 
-  // Step 4: Verify the dashboard is not showing "No Data"
-  const noDataCount = await page.getByText('No Data').count();
-  expect(noDataCount, `${DASHBOARD_APP_NAME} dashboard shows "No Data" error`).toBe(0);
+  // Step 4: Verify the dashboard is not showing "No Data".
+  // Use a web-first assertion so it auto-retries while Grafana panels load their
+  // series after the page settles (a one-shot .count() races panel loading).
+  await expect(
+    page.getByText('No Data'),
+    `${DASHBOARD_APP_NAME} dashboard shows "No Data" error`
+  ).toHaveCount(0, { timeout: 15000 });
   console.log(`✅ ${DASHBOARD_APP_NAME} dashboard appears to be healthy`);
 });

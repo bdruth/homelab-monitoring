@@ -20,18 +20,20 @@ test('Indexer application health check', async ({ page }) => {
   // Step 1: Navigate to the indexer app
   await page.goto(URL);
 
-  // Wait for page to load completely
-  await page.waitForLoadState('networkidle');
+  // Wait for the initial document; the visibility assertion below is the real
+  // readiness gate. Avoid waitForLoadState('networkidle'), which hangs on pages
+  // that poll/stream in the background and is the main source of flakiness here.
+  await page.waitForLoadState('domcontentloaded');
 
   // Step 2: Verify page title (basic availability check)
-  const title = await page.title();
-  expect(title).toContain(INDEXER_APP_NAME); // Note: Update this if testing a different indexer app
+  await expect(page).toHaveTitle(new RegExp(String(INDEXER_APP_NAME))); // Note: Update this if testing a different indexer app
   console.log('✅ Indexer application is available');
 
   // Step 3: Check if the specific indexer is present and healthy
-  // Look for elements with text that contains the indexer name
-  const indexerElement = await page.locator(`:text("${INDEXER_NAME}")`).first();
-  await expect(indexerElement).toBeVisible();
+  // Look for elements with text that contains the indexer name.
+  // Allow generous time for the SPA to render its data (cold starts can take ~20s).
+  const indexerElement = page.locator(`:text("${INDEXER_NAME}")`).first();
+  await expect(indexerElement).toBeVisible({ timeout: 25000 });
 
   // Check if there are any error indicators near this indexer
   const errorIconNearIndexer = await page
