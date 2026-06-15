@@ -46,7 +46,11 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           AUTH_USERNAME: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/username
           AUTH_PASSWORD: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/password
-          AUTH_TOTP: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password?attribute=otp
+          # The TOTP seed, not a pre-rendered code. Omitting ?attribute=otp returns
+          # the field's raw otpauth:// URI (which embeds the seed) instead of a
+          # calculated code; the test generates a fresh code from it via otplib, so
+          # it stays valid across retries (a captured code expires after ~30s).
+          AUTH_TOTP_SECRET: op://${{ env.SERVICE_ACCOUNT_VAULT }}/${{ env.SERVICE_ACCOUNT_ITEM }}/one-time password
           WORKFLOW_AUTH_USERNAME: op://${{ env.WORKFLOW_SERVICE_ACCOUNT_VAULT }}/${{ env.WORKFLOW_SERVICE_ACCOUNT_ITEM }}/username
           WORKFLOW_AUTH_PASSWORD: op://${{ env.WORKFLOW_SERVICE_ACCOUNT_VAULT }}/${{ env.WORKFLOW_SERVICE_ACCOUNT_ITEM }}/password
         with:
